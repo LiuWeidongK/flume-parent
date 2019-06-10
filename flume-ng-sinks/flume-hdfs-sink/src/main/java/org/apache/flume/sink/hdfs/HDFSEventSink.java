@@ -370,11 +370,20 @@ public class HDFSEventSink extends AbstractSink implements Configurable {
             timeZone, needRounding, roundUnit, roundValue, useLocalTime);
 
         String lookupPath = realPath + DIRECTORY_DELIMITER + realName;
+
+        // TODO: 2019/6/10 BucketWriter类是写入HDFS操作的具体实现类
         BucketWriter bucketWriter;
+
+        // TODO: 2019/6/10 HDFSWriter接口类
+        //  具体实现包括HDFSSequenceFile、HDFSDataStream、HDFSCompressedDataStream
+        //  具体对应配置SequenceFile, DataStream or CompressedStream
         HDFSWriter hdfsWriter = null;
+
         // Callback to remove the reference to the bucket writer from the
         // sfWriters map so that all buffers used by the HDFS file
         // handles are garbage collected.
+        // TODO: 2019/6/10 回调以从sfWriters映射中删除对bucket writer的引用
+        //  以便HDFS文件句柄使用的所有缓冲区都被垃圾回收
         WriterCallback closeCallback = new WriterCallback() {
           @Override
           public void run(String bucketPath) {
@@ -384,8 +393,13 @@ public class HDFSEventSink extends AbstractSink implements Configurable {
             }
           }
         };
+
+        // TODO: 2019/6/10 sfWritersLock对象为Object对象 单纯用作异步锁
+        //  sfWriters对象为继承自LinkedHashMap<String, BucketWriter>类的对象 可以理解为一个链表
         synchronized (sfWritersLock) {
           bucketWriter = sfWriters.get(lookupPath);
+
+          // TODO: 2019/6/10 文件还不存在 需要打开并缓存句柄
           // we haven't seen this file yet, so open it and cache the handle
           if (bucketWriter == null) {
             hdfsWriter = writerFactory.getWriter(fileType);

@@ -494,7 +494,7 @@ class BucketWriter {
   /**
    * Open file handles, write data, update stats, handle file rolling and
    * batching / flushing. <br />
-   * If the write fails, the file is implicitly closed and then the IOException
+   * If the write fails, the file is implicitly（隐式） closed and then the IOException
    * is rethrown. <br />
    * We rotate before append, and not after, so that the active file rolling
    * mechanism will never roll an empty file. This also ensures that the file
